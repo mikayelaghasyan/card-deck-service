@@ -1,0 +1,164 @@
+openapi: 3.0.3
+info:
+  title: 'Card Deck API'
+  version: '1.0'
+  contact:
+    name: 'Mikayel Aghasyan'
+    email: 'mikayel.aghasyan@gmail.com'
+servers:
+  - url: 'http://localhost:9000/api'
+    description: 'Local Server'
+  - url: '{scheme}://{host}/api'
+    description: 'Custom Server'
+    variables:
+      scheme:
+        enum:
+          - http
+          - https
+        default: http
+      host:
+        default: 'localhost:9000'
+paths:
+  /decks:
+    post:
+      description: 'Creates a new Deck'
+      parameters:
+        - in: query
+          name: shuffled
+          required: false
+          schema:
+            type: boolean
+        - in: query
+          name: cards
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/CardCode'
+          style: form
+          explode: false
+      responses:
+        201:
+          $ref: '#/components/responses/CreateDeckResponse'
+        400:
+          description: 'Request is not valid'
+  /decks/{id}:
+    get:
+      description: 'Opens a Deck'
+      parameters:
+        - $ref: '#/components/parameters/DeckId'
+      responses:
+        200:
+          $ref: '#/components/responses/OpenDeckResponse'
+        404:
+          description: 'Deck not found'
+  /decks/{id}/draw:
+    put:
+      description: 'Draws number of cards specified'
+      parameters:
+        - $ref: '#/components/parameters/DeckId'
+        - in: query
+          name: count
+          required: true
+          schema:
+            $ref: '#/components/schemas/NumberOfCards'
+      responses:
+        200:
+          $ref: '#/components/responses/DrawCardsResponse'
+        404:
+          description: 'Deck not found'
+        409:
+          description: 'Not enough cards in the Deck'
+components:
+  schemas:
+    NumberOfCards:
+      type: integer
+      format: int32
+      minimum: 1
+      maximum: 52
+    CardValue:
+      type: string
+      enum:
+        - ACE
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+        - '7'
+        - '8'
+        - '9'
+        - '10'
+        - JACK
+        - QUEEN
+        - KING
+    CardSuit:
+      type: string
+      enum:
+        - CLUBS
+        - DIAMONDS
+        - HEARTS
+        - SPADES
+    CardCode:
+      type: string
+      pattern: '^(A|2|3|4|5|6|7|8|9|10|J|Q|K)(C|D|H|S)$'
+    Card:
+      type: object
+      properties:
+        value:
+          $ref: '#/components/schemas/CardValue'
+        suit:
+          $ref: '#/components/schemas/CardSuit'
+        code:
+          $ref: '#/components/schemas/CardCode'
+    Cards:
+      type: object
+      properties:
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
+    DeckBrief:
+      type: object
+      properties:
+        deck_id:
+          type: string
+          format: uuid
+        shuffled:
+          type: boolean
+        remaining:
+          $ref: '#/components/schemas/NumberOfCards'
+    DeckFull:
+      allOf:
+        - $ref: '#/components/schemas/DeckBrief'
+        - $ref: '#/components/schemas/Cards'
+  securitySchemes: {}
+  responses:
+    CreateDeckResponse:
+      description: 'Deck successfully created'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DeckBrief'
+    OpenDeckResponse:
+      description: 'Deck'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DeckFull'
+    DrawCardsResponse:
+      description: 'Cards successfully drawn'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Cards'
+  parameters:
+    DeckId:
+      in: path
+      description: Deck Id
+      name: id
+      required: true
+      schema:
+        type: string
+        format: uuid
+security: []
