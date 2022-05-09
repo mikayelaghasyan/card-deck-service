@@ -10,3 +10,7 @@ run: build
 clean:
 	go clean
 	rm -rf ${TARGET_DIR}
+
+generate:
+	oapi-codegen -package api -generate types pkg/api/openapi.yml > pkg/api/types.gen.go
+	oapi-codegen -package api -generate server pkg/api/openapi.yml > pkg/api/server.gen.go
