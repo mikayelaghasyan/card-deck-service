@@ -27,8 +27,8 @@ func TestCreateDeck(t *testing.T) {
 		actual := api.CreateDeckResponse{}
 		json.Unmarshal(rec.Body.Bytes(), &actual)
 
-		assert.NotNil(t, uuid.FromStringOrNil(string(*actual.DeckId)))
-		assert.Equal(t, false, actual.Shuffled)
-		assert.Equal(t, 52, actual.Remaining)
+		assert.NotNil(t, uuid.FromStringOrNil(string(actual.DeckId)))
+		assert.Equal(t, false, bool(actual.Shuffled))
+		assert.Equal(t, 52, int(actual.Remaining))
 	}
 }

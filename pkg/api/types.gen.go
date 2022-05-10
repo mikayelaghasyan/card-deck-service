@@ -49,9 +49,9 @@ const (
 
 // Card defines model for Card.
 type Card struct {
-	Code  *CardCode  `json:"code,omitempty"`
-	Suit  *CardSuit  `json:"suit,omitempty"`
-	Value *CardValue `json:"value,omitempty"`
+	Code  CardCode  `json:"code"`
+	Suit  CardSuit  `json:"suit"`
+	Value CardValue `json:"value"`
 }
 
 // CardCode defines model for CardCode.
@@ -65,14 +65,14 @@ type CardValue string
 
 // Cards defines model for Cards.
 type Cards struct {
-	Cards *[]Card `json:"cards,omitempty"`
+	Cards []Card `json:"cards"`
 }
 
 // DeckBrief defines model for DeckBrief.
 type DeckBrief struct {
-	DeckId    *openapi_types.UUID `json:"deck_id,omitempty"`
-	Remaining *NumberOfCards      `json:"remaining,omitempty"`
-	Shuffled  *bool               `json:"shuffled,omitempty"`
+	DeckId    openapi_types.UUID `json:"deck_id"`
+	Remaining NumberOfCards      `json:"remaining"`
+	Shuffled  bool               `json:"shuffled"`
 }
 
 // DeckFull defines model for DeckFull.
