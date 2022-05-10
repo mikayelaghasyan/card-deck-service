@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/deepmap/oapi-codegen v1.10.1
 	github.com/labstack/echo/v4 v4.7.2
+	github.com/satori/go.uuid v1.2.0
 	github.com/stretchr/testify v1.7.1
 	github.com/swaggo/echo-swagger v1.3.2
 )
