@@ -1,6 +1,9 @@
 package service
 
-import "github.com/mikayelaghasyan/card-deck-service/pkg/model"
+import (
+	"github.com/google/uuid"
+	"github.com/mikayelaghasyan/card-deck-service/pkg/model"
+)
 
 type DeckService struct {
 }
@@ -10,7 +13,12 @@ func NewDeckService() (*DeckService, error) {
 }
 
 func (service *DeckService) CreateDeck(shuffled bool, cards *[]model.Card) model.Deck {
-	return model.Deck{}
+	id, _ := uuid.NewRandom()
+	return model.Deck{
+		Id:       id,
+		Shuffled: shuffled,
+		Cards:    newDefaultCardList(),
+	}
 }
 
 func newDefaultCardList() (cards []model.Card) {
