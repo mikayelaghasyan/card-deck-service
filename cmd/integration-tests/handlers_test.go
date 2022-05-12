@@ -55,6 +55,23 @@ func TestCreateDeckShuffled(t *testing.T) {
 	assert.Equal(t, 52, int(response.Remaining))
 }
 
+func TestCreateDeckWithCards(t *testing.T) {
+	setUp(t)
+	defer tearDown(t)
+
+	sampleCards := createSampleCards()
+	sampleCardCodes := toCardCodes(sampleCards)
+	createDeckResponse := sendCreateDeckRequest(t, nil, &sampleCardCodes)
+
+	assert.NotNil(t, uuid.FromStringOrNil(string(createDeckResponse.DeckId)))
+	assert.Equal(t, true, bool(createDeckResponse.Shuffled))
+	assert.Equal(t, len(sampleCardCodes), int(createDeckResponse.Remaining))
+
+	openDeckResponse := sendOpenDeckRequest(t, createDeckResponse.DeckId)
+
+	assert.Equal(t, sampleCards, openDeckResponse.Cards.Cards)
+}
+
 func TestOpenDeckDefault(t *testing.T) {
 	setUp(t)
 	defer tearDown(t)
@@ -139,4 +156,20 @@ func createOrderedCards() []api.Card {
 		}
 	}
 	return orderedCards
+}
+
+func createSampleCards() []api.Card {
+	return []api.Card{
+		handler.NewApiCard(api.CardSuitSPADES, api.CardValueACE),
+		handler.NewApiCard(api.CardSuitCLUBS, api.CardValueN10),
+		handler.NewApiCard(api.CardSuitDIAMONDS, api.CardValueN2),
+	}
+}
+
+func toCardCodes(cards []api.Card) []api.CardCode {
+	cardCodes := []api.CardCode{}
+	for _, card := range cards {
+		cardCodes = append(cardCodes, card.Code)
+	}
+	return cardCodes
 }
