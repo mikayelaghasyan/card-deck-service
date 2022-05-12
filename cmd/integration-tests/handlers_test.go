@@ -10,11 +10,29 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/api"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/handler"
+	"github.com/mikayelaghasyan/card-deck-service/pkg/service"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 )
 
+var hand *handler.Handler
+
+func setUp(t *testing.T) {
+	service, err := service.NewDeckService()
+	assert.NoError(t, err)
+	h, err := handler.NewHandler(service)
+	assert.NoError(t, err)
+	hand = h
+}
+
+func tearDown(t *testing.T) {
+
+}
+
 func TestCreateDeckDefault(t *testing.T) {
+	setUp(t)
+	defer tearDown(t)
+
 	createDeckResponse := sendCreateDeckRequest(t, nil, nil)
 
 	assert.NotNil(t, uuid.FromStringOrNil(string(createDeckResponse.DeckId)))
@@ -23,6 +41,9 @@ func TestCreateDeckDefault(t *testing.T) {
 }
 
 func TestCreateDeckShuffled(t *testing.T) {
+	setUp(t)
+	defer tearDown(t)
+
 	shuffled := true
 	response := sendCreateDeckRequest(t, &shuffled, nil)
 
@@ -32,6 +53,9 @@ func TestCreateDeckShuffled(t *testing.T) {
 }
 
 func TestOpenDeckDefault(t *testing.T) {
+	setUp(t)
+	defer tearDown(t)
+
 	createDeckResponse := sendCreateDeckRequest(t, nil, nil)
 	openDeckResponse := sendOpenDeckRequest(t, createDeckResponse.DeckId)
 
@@ -56,9 +80,8 @@ func sendCreateDeckRequest(t *testing.T, shuffled *bool, cards *[]api.CardCode) 
 	req := httptest.NewRequest(http.MethodPost, "/decks", nil)
 	rec := httptest.NewRecorder()
 	ctx := e.NewContext(req, rec)
-	handler, _ := handler.NewHandler()
 
-	if assert.NoError(t, handler.PostDecks(ctx, api.PostDecksParams{Shuffled: shuffled, Cards: cards})) {
+	if assert.NoError(t, hand.PostDecks(ctx, api.PostDecksParams{Shuffled: shuffled, Cards: cards})) {
 		assert.Equal(t, http.StatusCreated, rec.Code)
 
 		response = api.CreateDeckResponse{}
@@ -73,9 +96,8 @@ func sendOpenDeckRequest(t *testing.T, deckId types.UUID) (response api.OpenDeck
 	req := httptest.NewRequest(http.MethodPost, "/decks", nil)
 	rec := httptest.NewRecorder()
 	ctx := e.NewContext(req, rec)
-	handler, _ := handler.NewHandler()
 
-	if assert.NoError(t, handler.GetDecksId(ctx, api.DeckId(deckId))) {
+	if assert.NoError(t, hand.GetDecksId(ctx, api.DeckId(deckId))) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
 		response = api.OpenDeckResponse{}

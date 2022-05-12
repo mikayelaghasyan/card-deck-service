@@ -4,26 +4,32 @@ import (
 	"net/http"
 
 	"github.com/deepmap/oapi-codegen/pkg/types"
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/api"
+	"github.com/mikayelaghasyan/card-deck-service/pkg/service"
 )
 
 type Handler struct {
+	DeckService *service.DeckService
 }
 
-func NewHandler() (*Handler, error) {
-	return &Handler{}, nil
+func NewHandler(deckService *service.DeckService) (*Handler, error) {
+	return &Handler{
+		DeckService: deckService,
+	}, nil
 }
 
 func (h *Handler) PostDecks(ctx echo.Context, params api.PostDecksParams) error {
-	response := &api.CreateDeckResponse{
-		DeckId:    types.UUID(uuid.NewString()),
-		Shuffled:  false,
-		Remaining: 52,
-	}
+	shuffled := false
 	if params.Shuffled != nil {
-		response.Shuffled = *params.Shuffled
+		shuffled = *params.Shuffled
+	}
+	deck := h.DeckService.CreateDeck(shuffled, nil)
+
+	response := &api.CreateDeckResponse{
+		DeckId:    types.UUID(deck.Id.String()),
+		Shuffled:  deck.Shuffled,
+		Remaining: api.NumberOfCards(len(deck.Cards)),
 	}
 	return ctx.JSON(http.StatusCreated, response)
 }

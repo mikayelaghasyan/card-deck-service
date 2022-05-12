@@ -24,7 +24,7 @@ func (service *DeckService) CreateDeck(shuffled bool, cards *[]model.Card) model
 func newDefaultCardList() (cards []model.Card) {
 	var result []model.Card
 	for suit := 1; suit <= 4; suit++ {
-		for value := 1; suit <= 13; suit++ {
+		for value := 1; value <= 13; value++ {
 			result = append(result, model.Card{
 				Suit:  model.CardSuit(suit),
 				Value: model.CardValue(value),
