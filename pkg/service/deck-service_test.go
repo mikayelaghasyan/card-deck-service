@@ -3,6 +3,7 @@ package service
 import (
 	"testing"
 
+	"github.com/mikayelaghasyan/card-deck-service/pkg/common"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/model"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/repository"
 	"github.com/stretchr/testify/assert"
@@ -91,6 +92,16 @@ func TestDrawCards(t *testing.T) {
 	drawnCards, _ := deckService.DrawCards(createdDeck.Id, 3)
 
 	assert.Equal(t, createdDeck.Cards[:3], drawnCards)
+}
+
+func TestDrawCardsExcced(t *testing.T) {
+	setUp(t)
+	defer tearDown(t)
+
+	createdDeck, _ := deckService.CreateDeck(true, nil)
+	_, err := deckService.DrawCards(createdDeck.Id, 53)
+
+	assert.ErrorAs(t, err, &common.ErrNotEnoughCards)
 }
 
 func createSampleCards() []model.Card {
