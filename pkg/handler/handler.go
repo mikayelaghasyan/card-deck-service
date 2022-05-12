@@ -16,11 +16,18 @@ func NewHandler() (*Handler, error) {
 	return &Handler{}, nil
 }
 
-func (h *Handler) PostDecks(c echo.Context) error {
+func (h *Handler) PostDecks(ctx echo.Context, params api.PostDecksParams) error {
 	response := &api.CreateDeckResponse{
 		DeckId:    types.UUID(uuid.NewString()),
 		Shuffled:  false,
 		Remaining: 52,
 	}
-	return c.JSON(http.StatusCreated, response)
+	if params.Shuffled != nil {
+		response.Shuffled = *params.Shuffled
+	}
+	return ctx.JSON(http.StatusCreated, response)
+}
+
+func (h *Handler) GetDecksId(ctx echo.Context, id api.DeckId) error {
+	return ctx.JSON(http.StatusOK, nil)
 }
