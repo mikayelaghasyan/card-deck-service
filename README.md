@@ -19,7 +19,7 @@ The service is provided as a set of REST API endpoints.
 
 ## Makefile
 Makefile is provided with a few targets:
-- `make build` - builds the project and places the executable in the `target` directory
+- `make build` - builds the project and places the executable in the `./target` directory
 - `make run` - runs the app
 - `make unit-test` - runs all unit tests
 - `make integration-test` - runs all integration tests
