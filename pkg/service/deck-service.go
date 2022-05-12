@@ -6,27 +6,37 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/model"
+	"github.com/mikayelaghasyan/card-deck-service/pkg/repository"
 )
 
 type DeckService struct {
+	repository repository.DeckRepository
 }
 
-func NewDeckService() (*DeckService, error) {
+func NewDeckService(repository repository.DeckRepository) (*DeckService, error) {
 	rand.Seed(time.Now().UnixNano())
-	return &DeckService{}, nil
+	return &DeckService{
+		repository: repository,
+	}, nil
 }
 
-func (service *DeckService) CreateDeck(shuffled bool, cards *[]model.Card) model.Deck {
+func (service *DeckService) CreateDeck(shuffled bool, cards *[]model.Card) (*model.Deck, error) {
 	id, _ := uuid.NewRandom()
 	cardList := newDefaultCardList()
 	if shuffled {
 		rand.Shuffle(len(cardList), func(i, j int) { cardList[i], cardList[j] = cardList[j], cardList[i] })
 	}
-	return model.Deck{
+	deck := model.Deck{
 		Id:       id,
 		Shuffled: shuffled,
 		Cards:    cardList,
 	}
+	return service.repository.Save(deck)
+}
+
+func (service *DeckService) GetDeck(deckId uuid.UUID) *model.Deck {
+	deck, _ := service.repository.GetById(deckId)
+	return deck
 }
 
 func newDefaultCardList() (cards []model.Card) {

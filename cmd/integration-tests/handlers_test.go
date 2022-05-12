@@ -10,6 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/api"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/handler"
+	"github.com/mikayelaghasyan/card-deck-service/pkg/repository"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/service"
 	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
@@ -18,9 +19,11 @@ import (
 var hand *handler.Handler
 
 func setUp(t *testing.T) {
-	service, err := service.NewDeckService()
+	repo, err := repository.NewInMemoryDeckRepository()
 	assert.NoError(t, err)
-	h, err := handler.NewHandler(service)
+	service, err := service.NewDeckService(repo)
+	assert.NoError(t, err)
+	h, err := handler.NewHandler(*service)
 	assert.NoError(t, err)
 	hand = h
 }

@@ -10,12 +10,12 @@ import (
 )
 
 type Handler struct {
-	DeckService *service.DeckService
+	deckService service.DeckService
 }
 
-func NewHandler(deckService *service.DeckService) (*Handler, error) {
+func NewHandler(deckService service.DeckService) (*Handler, error) {
 	return &Handler{
-		DeckService: deckService,
+		deckService: deckService,
 	}, nil
 }
 
@@ -24,7 +24,11 @@ func (h *Handler) PostDecks(ctx echo.Context, params api.PostDecksParams) error 
 	if params.Shuffled != nil {
 		shuffled = *params.Shuffled
 	}
-	deck := h.DeckService.CreateDeck(shuffled, nil)
+	deck, err := h.deckService.CreateDeck(shuffled, nil)
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "deck not found")
+	}
 
 	response := &api.CreateDeckResponse{
 		DeckId:    types.UUID(deck.Id.String()),
@@ -34,6 +38,6 @@ func (h *Handler) PostDecks(ctx echo.Context, params api.PostDecksParams) error 
 	return ctx.JSON(http.StatusCreated, response)
 }
 
-func (h *Handler) GetDecksId(ctx echo.Context, id api.DeckId) error {
+func (h *Handler) GetDecksId(ctx echo.Context, deckId api.DeckId) error {
 	return ctx.JSON(http.StatusOK, nil)
 }
