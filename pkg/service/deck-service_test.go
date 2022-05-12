@@ -52,12 +52,11 @@ func TestCreateDeckWithCards(t *testing.T) {
 	defer tearDown(t)
 
 	sampleCards := createSampleCards()
-	expectedCards := append([]model.Card(nil), sampleCards...)
 
-	deck, _ := deckService.CreateDeck(false, sampleCards)
+	deck, _ := deckService.CreateDeck(false, createSampleCards())
 
 	assert.Equal(t, false, deck.Shuffled)
-	assert.Equal(t, expectedCards, deck.Cards)
+	assert.Equal(t, sampleCards, deck.Cards)
 }
 
 func TestCreateDeckWithCardsShuffled(t *testing.T) {
@@ -65,13 +64,12 @@ func TestCreateDeckWithCardsShuffled(t *testing.T) {
 	defer tearDown(t)
 
 	sampleCards := createSampleCards()
-	expectedCards := append([]model.Card(nil), sampleCards...)
 
-	deck, _ := deckService.CreateDeck(true, sampleCards)
+	deck, _ := deckService.CreateDeck(true, createSampleCards())
 
 	assert.Equal(t, true, deck.Shuffled)
 	assert.Equal(t, len(sampleCards), len(deck.Cards))
-	assert.NotEqual(t, expectedCards, deck.Cards)
+	assert.NotEqual(t, sampleCards, deck.Cards)
 }
 
 func TestGetDeck(t *testing.T) {

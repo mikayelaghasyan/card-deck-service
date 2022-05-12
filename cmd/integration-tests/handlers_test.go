@@ -95,7 +95,7 @@ func TestOpenDeckDefault(t *testing.T) {
 
 }
 
-func sendCreateDeckRequest(t *testing.T, shuffled *bool, cards *[]api.CardCode) (response api.CreateDeckResponse) {
+func sendCreateDeckRequest(t *testing.T, shuffled *bool, cards []api.CardCode) (response api.CreateDeckResponse) {
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodPost, "/decks", nil)
 	rec := httptest.NewRecorder()
