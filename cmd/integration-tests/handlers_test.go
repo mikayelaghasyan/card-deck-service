@@ -135,24 +135,8 @@ func createOrderedCards() []api.Card {
 	var orderedCards []api.Card
 	for _, suit := range cardSuits {
 		for _, value := range cardValues {
-			orderedCards = append(orderedCards, createCard(suit, value))
+			orderedCards = append(orderedCards, handler.NewApiCard(suit, value))
 		}
 	}
 	return orderedCards
-}
-
-func createCard(suit api.CardSuit, value api.CardValue) api.Card {
-	var code string
-	if value == api.CardValueN10 {
-		code += string(value)
-	} else {
-		code += string(value[:1])
-	}
-	code += string(suit[:1])
-
-	return api.Card{
-		Suit:  suit,
-		Value: value,
-		Code:  api.CardCode(code),
-	}
 }
