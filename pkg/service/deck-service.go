@@ -22,7 +22,12 @@ func NewDeckService(repository repository.DeckRepository) (*DeckService, error) 
 
 func (service *DeckService) CreateDeck(shuffled bool, cards *[]model.Card) (*model.Deck, error) {
 	id, _ := uuid.NewRandom()
-	cardList := newDefaultCardList()
+	var cardList []model.Card
+	if cards != nil {
+		cardList = *cards
+	} else {
+		cardList = newDefaultCardList()
+	}
 	if shuffled {
 		rand.Shuffle(len(cardList), func(i, j int) { cardList[i], cardList[j] = cardList[j], cardList[i] })
 	}

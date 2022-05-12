@@ -57,7 +57,7 @@ func TestCreateDeckWithCards(t *testing.T) {
 		model.NewCard(model.DIAMONDS, model.TWO),
 	}
 
-	deck, _ := deckService.CreateDeck(true, &sampleCards)
+	deck, _ := deckService.CreateDeck(false, &sampleCards)
 
 	assert.Equal(t, false, deck.Shuffled)
 	assert.Equal(t, sampleCards, deck.Cards)
