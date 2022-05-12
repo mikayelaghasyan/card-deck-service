@@ -43,10 +43,7 @@ func newDefaultCardList() (cards []model.Card) {
 	var result []model.Card
 	for suit := 1; suit <= 4; suit++ {
 		for value := 1; value <= 13; value++ {
-			result = append(result, model.Card{
-				Suit:  model.CardSuit(suit),
-				Value: model.CardValue(value),
-			})
+			result = append(result, model.NewCard(model.CardSuit(suit), model.CardValue(value)))
 		}
 	}
 	return result

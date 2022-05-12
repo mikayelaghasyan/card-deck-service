@@ -33,3 +33,10 @@ const (
 	QUEEN
 	KING
 )
+
+func NewCard(suit CardSuit, value CardValue) Card {
+	return Card{
+		Suit:  suit,
+		Value: value,
+	}
+}
