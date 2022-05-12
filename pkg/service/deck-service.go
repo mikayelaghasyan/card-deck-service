@@ -67,6 +67,10 @@ func (service *DeckService) GetDeck(deckId uuid.UUID) *model.Deck {
 	return deck
 }
 
+func (service *DeckService) DrawCards(deckId uuid.UUID, count int8) ([]model.Card, error) {
+	return nil, nil
+}
+
 func (service *DeckService) newDefaultCardList() (cards []model.Card) {
 	var result []model.Card
 	for _, suit := range service.cardSuits {

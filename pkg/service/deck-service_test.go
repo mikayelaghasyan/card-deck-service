@@ -83,6 +83,16 @@ func TestGetDeck(t *testing.T) {
 	assert.Equal(t, createdDeck, deck)
 }
 
+func TestDrawCards(t *testing.T) {
+	setUp(t)
+	defer tearDown(t)
+
+	createdDeck, _ := deckService.CreateDeck(true, nil)
+	drawnCards, _ := deckService.DrawCards(createdDeck.Id, 3)
+
+	assert.Equal(t, createdDeck.Cards[:3], drawnCards)
+}
+
 func createSampleCards() []model.Card {
 	return []model.Card{
 		model.NewCard(model.SPADES, model.ACE),
