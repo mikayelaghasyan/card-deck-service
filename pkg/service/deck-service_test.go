@@ -29,3 +29,16 @@ func TestCreateDeckDefault(t *testing.T) {
 	assert.Equal(t, false, deck.Shuffled)
 	assert.Equal(t, orderedCards, deck.Cards)
 }
+
+func TestCreateDeckShuffled(t *testing.T) {
+	setUp(t)
+	defer tearDown(t)
+
+	deck := deckService.CreateDeck(true, nil)
+
+	orderedCards := newDefaultCardList()
+
+	assert.Equal(t, true, deck.Shuffled)
+	assert.Equal(t, len(orderedCards), len(deck.Cards))
+	assert.NotEqual(t, orderedCards, deck.Cards)
+}

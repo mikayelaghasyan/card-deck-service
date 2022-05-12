@@ -1,6 +1,9 @@
 package service
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/model"
 )
@@ -9,15 +12,20 @@ type DeckService struct {
 }
 
 func NewDeckService() (*DeckService, error) {
+	rand.Seed(time.Now().UnixNano())
 	return &DeckService{}, nil
 }
 
 func (service *DeckService) CreateDeck(shuffled bool, cards *[]model.Card) model.Deck {
 	id, _ := uuid.NewRandom()
+	cardList := newDefaultCardList()
+	if shuffled {
+		rand.Shuffle(len(cardList), func(i, j int) { cardList[i], cardList[j] = cardList[j], cardList[i] })
+	}
 	return model.Deck{
 		Id:       id,
 		Shuffled: shuffled,
-		Cards:    newDefaultCardList(),
+		Cards:    cardList,
 	}
 }
 
