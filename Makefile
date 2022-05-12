@@ -7,8 +7,13 @@ build:
 run: build
 	./${TARGET_DIR}/${BINARY_NAME}
 
-test-ig: build
+test-unit: build
+	go test ./pkg/...
+
+test-integration: build
 	go test ./cmd/integration-tests/...
+
+test-all: test-unit test-integration
 
 clean:
 	go clean
