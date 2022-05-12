@@ -20,11 +20,11 @@ func NewDeckService(repository repository.DeckRepository) (*DeckService, error) 
 	}, nil
 }
 
-func (service *DeckService) CreateDeck(shuffled bool, cards *[]model.Card) (*model.Deck, error) {
+func (service *DeckService) CreateDeck(shuffled bool, cards []model.Card) (*model.Deck, error) {
 	id, _ := uuid.NewRandom()
 	var cardList []model.Card
 	if cards != nil {
-		cardList = *cards
+		cardList = cards
 	} else {
 		cardList = newDefaultCardList()
 	}

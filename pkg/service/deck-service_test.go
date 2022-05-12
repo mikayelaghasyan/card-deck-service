@@ -51,33 +51,27 @@ func TestCreateDeckWithCards(t *testing.T) {
 	setUp(t)
 	defer tearDown(t)
 
-	sampleCards := []model.Card{
-		model.NewCard(model.SPADES, model.ACE),
-		model.NewCard(model.CLUBS, model.TEN),
-		model.NewCard(model.DIAMONDS, model.TWO),
-	}
+	sampleCards := createSampleCards()
+	expectedCards := append([]model.Card(nil), sampleCards...)
 
-	deck, _ := deckService.CreateDeck(false, &sampleCards)
+	deck, _ := deckService.CreateDeck(false, sampleCards)
 
 	assert.Equal(t, false, deck.Shuffled)
-	assert.Equal(t, sampleCards, deck.Cards)
+	assert.Equal(t, expectedCards, deck.Cards)
 }
 
 func TestCreateDeckWithCardsShuffled(t *testing.T) {
 	setUp(t)
 	defer tearDown(t)
 
-	sampleCards := []model.Card{
-		model.NewCard(model.SPADES, model.ACE),
-		model.NewCard(model.CLUBS, model.TEN),
-		model.NewCard(model.DIAMONDS, model.TWO),
-	}
+	sampleCards := createSampleCards()
+	expectedCards := append([]model.Card(nil), sampleCards...)
 
-	deck, _ := deckService.CreateDeck(true, &sampleCards)
+	deck, _ := deckService.CreateDeck(true, sampleCards)
 
 	assert.Equal(t, true, deck.Shuffled)
 	assert.Equal(t, len(sampleCards), len(deck.Cards))
-	assert.NotEqual(t, sampleCards, deck.Cards)
+	assert.NotEqual(t, expectedCards, deck.Cards)
 }
 
 func TestGetDeck(t *testing.T) {
@@ -89,4 +83,16 @@ func TestGetDeck(t *testing.T) {
 	deck := deckService.GetDeck(createdDeck.Id)
 
 	assert.Equal(t, createdDeck, deck)
+}
+
+func createSampleCards() []model.Card {
+	return []model.Card{
+		model.NewCard(model.SPADES, model.ACE),
+		model.NewCard(model.CLUBS, model.TEN),
+		model.NewCard(model.DIAMONDS, model.TWO),
+		model.NewCard(model.DIAMONDS, model.FIVE),
+		model.NewCard(model.HEARTS, model.JACK),
+		model.NewCard(model.HEARTS, model.KING),
+		model.NewCard(model.DIAMONDS, model.ACE),
+	}
 }
