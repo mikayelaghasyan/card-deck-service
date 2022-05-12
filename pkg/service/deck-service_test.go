@@ -28,7 +28,7 @@ func TestCreateDeckDefault(t *testing.T) {
 
 	deck, _ := deckService.CreateDeck(false, nil)
 
-	orderedCards := newDefaultCardList()
+	orderedCards := deckService.newDefaultCardList()
 
 	assert.Equal(t, false, deck.Shuffled)
 	assert.Equal(t, orderedCards, deck.Cards)
@@ -40,7 +40,7 @@ func TestCreateDeckShuffled(t *testing.T) {
 
 	deck, _ := deckService.CreateDeck(true, nil)
 
-	orderedCards := newDefaultCardList()
+	orderedCards := deckService.newDefaultCardList()
 
 	assert.Equal(t, true, deck.Shuffled)
 	assert.Equal(t, len(orderedCards), len(deck.Cards))
@@ -51,25 +51,25 @@ func TestCreateDeckWithCards(t *testing.T) {
 	setUp(t)
 	defer tearDown(t)
 
-	sampleCards := createSampleCards()
+	expectedCards := createSampleCards()
 
 	deck, _ := deckService.CreateDeck(false, createSampleCards())
 
 	assert.Equal(t, false, deck.Shuffled)
-	assert.Equal(t, sampleCards, deck.Cards)
+	assert.Equal(t, expectedCards, deck.Cards)
 }
 
 func TestCreateDeckWithCardsShuffled(t *testing.T) {
 	setUp(t)
 	defer tearDown(t)
 
-	sampleCards := createSampleCards()
+	expectedCards := createSampleCards()
 
 	deck, _ := deckService.CreateDeck(true, createSampleCards())
 
 	assert.Equal(t, true, deck.Shuffled)
-	assert.Equal(t, len(sampleCards), len(deck.Cards))
-	assert.NotEqual(t, sampleCards, deck.Cards)
+	assert.Equal(t, len(expectedCards), len(deck.Cards))
+	assert.NotEqual(t, expectedCards, deck.Cards)
 }
 
 func TestGetDeck(t *testing.T) {

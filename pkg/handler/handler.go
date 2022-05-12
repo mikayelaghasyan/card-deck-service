@@ -26,7 +26,14 @@ func (h *Handler) PostDecks(ctx echo.Context, params api.PostDecksParams) error 
 	if params.Shuffled != nil {
 		shuffled = *params.Shuffled
 	}
-	deck, err := h.deckService.CreateDeck(shuffled, nil)
+
+	var cards []model.Card
+	if params.Cards != nil {
+		cardCodes := *params.Cards
+		cards = toModelCards(cardCodes)
+	}
+
+	deck, err := h.deckService.CreateDeck(shuffled, cards)
 
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "could not create deck")
@@ -97,7 +104,7 @@ func toApiCardSuit(suit model.CardSuit) api.CardSuit {
 	case model.HEARTS:
 		return api.CardSuitHEARTS
 	}
-	panic("unknown card suit")
+	panic("unknown card suit: " + suit)
 }
 
 func toApiCardValue(value model.CardValue) api.CardValue {
@@ -129,7 +136,7 @@ func toApiCardValue(value model.CardValue) api.CardValue {
 	case model.KING:
 		return api.CardValueKING
 	}
-	panic("unknown card value")
+	panic("unknown card value: " + value)
 }
 
 func cardCode(suit api.CardSuit, value api.CardValue) api.CardCode {
@@ -141,4 +148,12 @@ func cardCode(suit api.CardSuit, value api.CardValue) api.CardCode {
 	}
 	code += string(suit[:1])
 	return api.CardCode(code)
+}
+
+func toModelCards(cardCodes []api.CardCode) []model.Card {
+	cards := []model.Card{}
+	for _, code := range cardCodes {
+		cards = append(cards, model.NewCardFromCode(string(code)))
+	}
+	return cards
 }

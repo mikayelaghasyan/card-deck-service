@@ -11,12 +11,35 @@ import (
 
 type DeckService struct {
 	repository repository.DeckRepository
+	cardSuits  []model.CardSuit
+	cardValues []model.CardValue
 }
 
 func NewDeckService(repository repository.DeckRepository) (*DeckService, error) {
 	rand.Seed(time.Now().UnixNano())
 	return &DeckService{
 		repository: repository,
+		cardSuits: []model.CardSuit{
+			model.SPADES,
+			model.DIAMONDS,
+			model.CLUBS,
+			model.HEARTS,
+		},
+		cardValues: []model.CardValue{
+			model.ACE,
+			model.TWO,
+			model.THREE,
+			model.FOUR,
+			model.FIVE,
+			model.SIX,
+			model.SEVEN,
+			model.EIGHT,
+			model.NINE,
+			model.TEN,
+			model.JACK,
+			model.QUEEN,
+			model.KING,
+		},
 	}, nil
 }
 
@@ -26,7 +49,7 @@ func (service *DeckService) CreateDeck(shuffled bool, cards []model.Card) (*mode
 	if cards != nil {
 		cardList = cards
 	} else {
-		cardList = newDefaultCardList()
+		cardList = service.newDefaultCardList()
 	}
 	if shuffled {
 		rand.Shuffle(len(cardList), func(i, j int) { cardList[i], cardList[j] = cardList[j], cardList[i] })
@@ -44,11 +67,11 @@ func (service *DeckService) GetDeck(deckId uuid.UUID) *model.Deck {
 	return deck
 }
 
-func newDefaultCardList() (cards []model.Card) {
+func (service *DeckService) newDefaultCardList() (cards []model.Card) {
 	var result []model.Card
-	for suit := 1; suit <= 4; suit++ {
-		for value := 1; value <= 13; value++ {
-			result = append(result, model.NewCard(model.CardSuit(suit), model.CardValue(value)))
+	for _, suit := range service.cardSuits {
+		for _, value := range service.cardValues {
+			result = append(result, model.NewCard(suit, value))
 		}
 	}
 	return result

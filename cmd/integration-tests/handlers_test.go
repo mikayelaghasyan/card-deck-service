@@ -63,13 +63,38 @@ func TestCreateDeckWithCards(t *testing.T) {
 	sampleCardCodes := toCardCodes(sampleCards)
 	createDeckResponse := sendCreateDeckRequest(t, nil, &sampleCardCodes)
 
+	expectedCards := createSampleCards()
+	expectedCardCodes := toCardCodes(sampleCards)
+
 	assert.NotNil(t, uuid.FromStringOrNil(string(createDeckResponse.DeckId)))
-	assert.Equal(t, true, bool(createDeckResponse.Shuffled))
-	assert.Equal(t, len(sampleCardCodes), int(createDeckResponse.Remaining))
+	assert.Equal(t, false, bool(createDeckResponse.Shuffled))
+	assert.Equal(t, len(expectedCardCodes), int(createDeckResponse.Remaining))
 
 	openDeckResponse := sendOpenDeckRequest(t, createDeckResponse.DeckId)
 
-	assert.Equal(t, sampleCards, openDeckResponse.Cards.Cards)
+	assert.Equal(t, expectedCards, openDeckResponse.Cards.Cards)
+}
+
+func TestCreateDeckWithCardsShuffled(t *testing.T) {
+	setUp(t)
+	defer tearDown(t)
+
+	shuffled := true
+	sampleCards := createSampleCards()
+	sampleCardCodes := toCardCodes(sampleCards)
+	createDeckResponse := sendCreateDeckRequest(t, &shuffled, &sampleCardCodes)
+
+	expectedCards := createSampleCards()
+	expectedCardCodes := toCardCodes(sampleCards)
+
+	assert.NotNil(t, uuid.FromStringOrNil(string(createDeckResponse.DeckId)))
+	assert.Equal(t, true, bool(createDeckResponse.Shuffled))
+	assert.Equal(t, len(expectedCardCodes), int(createDeckResponse.Remaining))
+
+	openDeckResponse := sendOpenDeckRequest(t, createDeckResponse.DeckId)
+
+	assert.Equal(t, len(expectedCards), len(openDeckResponse.Cards.Cards))
+	assert.NotEqual(t, expectedCards, openDeckResponse.Cards.Cards)
 }
 
 func TestOpenDeckDefault(t *testing.T) {
@@ -95,7 +120,7 @@ func TestOpenDeckDefault(t *testing.T) {
 
 }
 
-func sendCreateDeckRequest(t *testing.T, shuffled *bool, cards []api.CardCode) (response api.CreateDeckResponse) {
+func sendCreateDeckRequest(t *testing.T, shuffled *bool, cards *[]api.CardCode) (response api.CreateDeckResponse) {
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodPost, "/decks", nil)
 	rec := httptest.NewRecorder()
