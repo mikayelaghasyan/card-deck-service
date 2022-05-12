@@ -52,6 +52,7 @@ func (h *Handler) PostDecks(ctx echo.Context, params api.PostDecksParams) error 
 func (h *Handler) GetDecksId(ctx echo.Context, deckId api.DeckId) error {
 	id, _ := uuid.Parse(string(deckId))
 	deck, err := h.deckService.GetDeck(id)
+
 	if err != nil {
 		if errors.Is(err, common.ErrNotFound) {
 			return echo.NewHTTPError(http.StatusNotFound, common.ErrNotFound.Error())
@@ -73,8 +74,24 @@ func (h *Handler) GetDecksId(ctx echo.Context, deckId api.DeckId) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
-func (h *Handler) PutDecksIdDraw(ctx echo.Context, id api.DeckId, params api.PutDecksIdDrawParams) error {
-	return nil
+func (h *Handler) PutDecksIdDraw(ctx echo.Context, deckId api.DeckId, params api.PutDecksIdDrawParams) error {
+	id, _ := uuid.Parse(string(deckId))
+	cards, err := h.deckService.DrawCards(id, int(params.Count))
+
+	if err != nil {
+		if errors.Is(err, common.ErrNotFound) {
+			return echo.NewHTTPError(http.StatusNotFound, common.ErrNotFound.Error())
+		} else if errors.Is(err, common.ErrNotEnoughCards) {
+			return echo.NewHTTPError(http.StatusConflict, common.ErrNotEnoughCards.Error())
+		} else {
+			return echo.NewHTTPError(http.StatusInternalServerError, common.ErrGeneral.Error())
+		}
+	}
+
+	response := api.DrawCardsResponse{
+		Cards: toApiCards(cards),
+	}
+	return ctx.JSON(http.StatusOK, response)
 }
 
 func NewApiCard(suit api.CardSuit, value api.CardValue) api.Card {
