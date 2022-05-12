@@ -60,6 +60,10 @@ func (h *Handler) GetDecksId(ctx echo.Context, deckId api.DeckId) error {
 	return ctx.JSON(http.StatusOK, response)
 }
 
+func (h *Handler) PutDecksIdDraw(ctx echo.Context, id api.DeckId, params api.PutDecksIdDrawParams) error {
+	panic("not implemented")
+}
+
 func NewApiCard(suit api.CardSuit, value api.CardValue) api.Card {
 	return api.Card{
 		Suit:  suit,
