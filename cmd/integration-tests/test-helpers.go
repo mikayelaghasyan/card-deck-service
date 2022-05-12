@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func sendCreateDeckRequest(t *testing.T, handler handler.Handler, shuffled *bool, cards *[]api.CardCode) (response api.CreateDeckResponse) {
+func SendCreateDeckRequest(t *testing.T, handler handler.Handler, shuffled *bool, cards *[]api.CardCode) (response api.CreateDeckResponse) {
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodPost, "/decks", nil)
 	rec := httptest.NewRecorder()
@@ -29,7 +29,7 @@ func sendCreateDeckRequest(t *testing.T, handler handler.Handler, shuffled *bool
 	return
 }
 
-func sendOpenDeckRequest(t *testing.T, handler handler.Handler, deckId types.UUID) (response api.OpenDeckResponse) {
+func SendOpenDeckRequest(t *testing.T, handler handler.Handler, deckId types.UUID) (response api.OpenDeckResponse) {
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodPost, "/decks", nil)
 	rec := httptest.NewRecorder()
@@ -45,7 +45,23 @@ func sendOpenDeckRequest(t *testing.T, handler handler.Handler, deckId types.UUI
 	return
 }
 
-func createOrderedCards() []api.Card {
+func SendDrawCardsRequest(t *testing.T, handler handler.Handler, deckId types.UUID, count api.NumberOfCards) (response api.DrawCardsResponse) {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPost, "/decks/:id/draw", nil)
+	rec := httptest.NewRecorder()
+	ctx := e.NewContext(req, rec)
+
+	if assert.NoError(t, handler.PutDecksIdDraw(ctx, api.DeckId(deckId), api.PutDecksIdDrawParams{Count: count})) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+
+		response = api.DrawCardsResponse{}
+		json.Unmarshal(rec.Body.Bytes(), &response)
+	}
+
+	return
+}
+
+func CreateOrderedCards() []api.Card {
 	cardSuits := []api.CardSuit{
 		api.CardSuitSPADES,
 		api.CardSuitDIAMONDS,
@@ -76,7 +92,7 @@ func createOrderedCards() []api.Card {
 	return orderedCards
 }
 
-func createSampleCards() []api.Card {
+func CreateSampleCards() []api.Card {
 	return []api.Card{
 		handler.NewApiCard(api.CardSuitSPADES, api.CardValueACE),
 		handler.NewApiCard(api.CardSuitCLUBS, api.CardValueN10),
@@ -84,7 +100,7 @@ func createSampleCards() []api.Card {
 	}
 }
 
-func toCardCodes(cards []api.Card) []api.CardCode {
+func ToCardCodes(cards []api.Card) []api.CardCode {
 	cardCodes := []api.CardCode{}
 	for _, card := range cards {
 		cardCodes = append(cardCodes, card.Code)

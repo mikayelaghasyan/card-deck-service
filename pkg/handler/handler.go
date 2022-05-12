@@ -68,7 +68,7 @@ func (h *Handler) GetDecksId(ctx echo.Context, deckId api.DeckId) error {
 }
 
 func (h *Handler) PutDecksIdDraw(ctx echo.Context, id api.DeckId, params api.PutDecksIdDrawParams) error {
-	panic("not implemented")
+	return nil
 }
 
 func NewApiCard(suit api.CardSuit, value api.CardValue) api.Card {
