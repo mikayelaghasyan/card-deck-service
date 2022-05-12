@@ -3,6 +3,7 @@ package service
 import (
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/common"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/model"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/repository"
@@ -82,6 +83,16 @@ func TestGetDeck(t *testing.T) {
 	deck, _ := deckService.GetDeck(createdDeck.Id)
 
 	assert.Equal(t, createdDeck, deck)
+}
+
+func TestGetDeckNotFound(t *testing.T) {
+	setUp(t)
+	defer tearDown(t)
+
+	deckId, _ := uuid.NewRandom()
+	_, err := deckService.GetDeck(deckId)
+
+	assert.ErrorAs(t, err, &common.ErrNotFound)
 }
 
 func TestDrawCards(t *testing.T) {
