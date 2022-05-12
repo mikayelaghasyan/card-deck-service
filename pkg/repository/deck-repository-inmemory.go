@@ -1,9 +1,8 @@
 package repository
 
 import (
-	"errors"
-
 	"github.com/google/uuid"
+	"github.com/mikayelaghasyan/card-deck-service/pkg/common"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/model"
 )
 
@@ -27,6 +26,6 @@ func (repository *InMemoryDeckRepository) GetById(deckId uuid.UUID) (*model.Deck
 	if exists {
 		return &deck, nil
 	} else {
-		return nil, errors.New("deck not found")
+		return nil, common.ErrNotFound
 	}
 }

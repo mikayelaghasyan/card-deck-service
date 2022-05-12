@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/deepmap/oapi-codegen/pkg/types"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/api"
+	"github.com/mikayelaghasyan/card-deck-service/pkg/common"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/model"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/service"
 )
@@ -49,9 +51,13 @@ func (h *Handler) PostDecks(ctx echo.Context, params api.PostDecksParams) error 
 
 func (h *Handler) GetDecksId(ctx echo.Context, deckId api.DeckId) error {
 	id, _ := uuid.Parse(string(deckId))
-	deck := h.deckService.GetDeck(id)
-	if deck == nil {
-		return echo.NewHTTPError(http.StatusNotFound, "deck not found")
+	deck, err := h.deckService.GetDeck(id)
+	if err != nil {
+		if errors.Is(err, common.ErrNotFound) {
+			return echo.NewHTTPError(http.StatusNotFound, common.ErrNotFound.Error())
+		} else {
+			return echo.NewHTTPError(http.StatusInternalServerError, common.ErrGeneral.Error())
+		}
 	}
 
 	response := api.OpenDeckResponse{

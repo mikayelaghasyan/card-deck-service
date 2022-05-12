@@ -78,7 +78,7 @@ func TestGetDeck(t *testing.T) {
 
 	createdDeck, _ := deckService.CreateDeck(false, nil)
 
-	deck := deckService.GetDeck(createdDeck.Id)
+	deck, _ := deckService.GetDeck(createdDeck.Id)
 
 	assert.Equal(t, createdDeck, deck)
 }

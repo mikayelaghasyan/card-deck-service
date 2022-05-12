@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/mikayelaghasyan/card-deck-service/pkg/common"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/model"
 	"github.com/mikayelaghasyan/card-deck-service/pkg/repository"
 )
@@ -62,13 +63,26 @@ func (service *DeckService) CreateDeck(shuffled bool, cards []model.Card) (*mode
 	return service.repository.Save(deck)
 }
 
-func (service *DeckService) GetDeck(deckId uuid.UUID) *model.Deck {
-	deck, _ := service.repository.GetById(deckId)
-	return deck
+func (service *DeckService) GetDeck(deckId uuid.UUID) (*model.Deck, error) {
+	return service.repository.GetById(deckId)
 }
 
-func (service *DeckService) DrawCards(deckId uuid.UUID, count int8) ([]model.Card, error) {
-	return nil, nil
+func (service *DeckService) DrawCards(deckId uuid.UUID, count int) ([]model.Card, error) {
+	deck, err := service.repository.GetById(deckId)
+	if err != nil {
+		return nil, err
+	}
+
+	if count > len(deck.Cards) {
+		return nil, common.ErrNotEnoughCards
+	}
+
+	drawnCards := deck.Cards[:count]
+
+	deck.Cards = deck.Cards[count:]
+	service.repository.Save(*deck)
+
+	return drawnCards, nil
 }
 
 func (service *DeckService) newDefaultCardList() (cards []model.Card) {
